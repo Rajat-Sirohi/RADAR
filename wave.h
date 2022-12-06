@@ -9,12 +9,10 @@
 #include <iostream>
 #include <vector>
 
-#define RAND_F (float(std::rand()) / float(RAND_MAX))
-
 class Wave {
 public:
     glm::vec2 dir, pos = glm::vec2(0.0f);
-    float speed = 1.0f;
+    float speed = 2.0f;
     float duration = 0.0f;
     Wave(glm::vec2 dir);
     ~Wave();
@@ -22,6 +20,7 @@ public:
     void move(float dt);
     void reflect();
     bool received();
+    glm::vec2 process();
 private:
     GLuint VAO, VBO;
     void updateVBO() {

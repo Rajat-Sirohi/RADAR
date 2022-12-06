@@ -1,6 +1,6 @@
 #include "wave.h"
 
-#define EPS 0.0001
+#define EPS 0.001
 
 Wave::Wave(glm::vec2 direction) : dir(glm::normalize(direction)) {
     // Setup VAO, VBO
@@ -36,6 +36,10 @@ void Wave::reflect() {
 
 bool Wave::received() {
     return glm::length2(pos) < EPS && glm::dot(pos, dir) < 0;
+}
+
+glm::vec2 Wave::process() {
+    return -3.0f * dir;
 }
 
 bool OOB(Wave *w) {

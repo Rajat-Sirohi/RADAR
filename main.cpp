@@ -4,6 +4,7 @@
 #include "shader.h"
 #include "target.h"
 #include "wave.h"
+#include "missile.h"
 
 #include <iostream>
 #include <vector>
@@ -18,17 +19,19 @@ Shader passthroughShader = Shader();
 
 std::vector<Target*> targets;
 std::vector<Wave*> waves;
+std::vector<Missile*> missiles;
 
 void processInput(GLFWwindow* window) {
     glfwPollEvents();
-    // if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-    // }
+
+    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+        targets.push_back(new Target());
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
+
     if (key >= 0 && key < 1024) {
         if (action == GLFW_PRESS) {
             if (key == GLFW_KEY_R) {
@@ -58,7 +61,7 @@ void init() {
 	}
     glfwMakeContextCurrent(window);
 
-    glfwSwapInterval(0); // disable VSync, which artificially limits FPS
+    glfwSwapInterval(0); // disable VSync
     glfwSetKeyCallback(window, key_callback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -91,13 +94,37 @@ void update(float dt) {
             it_t++;
     }
 
+    std::vector<Missile*>::iterator it_m = missiles.begin();
+    while (it_m != missiles.end()) {
+        (*it_m)->move(dt);
+        if (OOB(*it_m)) {
+            missiles.erase(it_m);
+        } else {
+            bool hit = false;
+            it_t = targets.begin();
+            while (it_t != targets.end()) {
+                if ((*it_t)->contains((*it_m)->pos)) {
+                    hit = true;
+                    targets.erase(it_t);
+                    missiles.erase(it_m);
+                    break;
+                }
+                it_t++;
+            }
+
+            if (!hit)
+                it_m++;
+        }
+    }
+
     std::vector<Wave*>::iterator it_w = waves.begin();
     while (it_w != waves.end()) {
         (*it_w)->move(dt);
         if (OOB(*it_w)) {
             waves.erase(it_w);
         } else if ((*it_w)->received()) {
-            // process signal
+            glm::vec2 vel = (*it_w)->process();
+            missiles.push_back(new Missile(vel));
             waves.erase(it_w);
         } else {
             for (Target *target : targets) {
@@ -127,12 +154,17 @@ void render() {
     for (Wave *wave : waves)
         wave->draw();
 
+    glPointSize(5);
+    passthroughShader.setVec3("color", glm::vec3(0.0f, 0.0f, 1.0f));
+    for (Missile *missile : missiles)
+        missile->draw();
+
     glfwSwapBuffers(window);
 }
 
 void run() {
     unsigned int frameCount = 0;
-    float prevTime = 0, frameTime = 0;
+    float prevTime = 0, dispTime = 0, pulseTime = 0;
     while (!glfwWindowShouldClose(window)) {
         float time = glfwGetTime();
         float dt = time - prevTime;
@@ -142,12 +174,17 @@ void run() {
         update(dt);
         render();
 
-        if (time - frameTime > 0.3) {
+        if (time - pulseTime > 2.0) {
+            pulse(waves);
+            pulseTime = time;
+        }
+
+        if (time - dispTime > 0.3) {
             std::cout << "T: " << targets.size() << "\t";
             std::cout << "W: " << waves.size() << "\t";
-            std::cout << "FPS: " << std::round(frameCount/(time - frameTime)) << std::endl;
+            std::cout << "FPS: " << std::round(frameCount/(time - dispTime)) << std::endl;
             frameCount = 0;
-            frameTime = time;
+            dispTime = time;
         }
         frameCount++;
     }

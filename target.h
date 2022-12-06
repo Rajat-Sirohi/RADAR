@@ -14,8 +14,8 @@ public:
     float size;
     Target(glm::vec2 pos, glm::vec2 vel, float size);
     Target(glm::vec2 pos, glm::vec2 vel) : Target(pos, vel, 0.05f) {}
-    Target(glm::vec2 pos) : Target(pos, glm::vec2(2*RAND_F-1, 2*RAND_F-1)) {}
-    Target() : Target(glm::vec2(RAND_F-0.5, RAND_F-0.5)) {}
+    Target(glm::vec2 pos) : Target(pos, glm::vec2(0.0f)) {}
+    Target() : Target(glm::vec2(1.8*RAND_F-0.9, 1.8*RAND_F-0.9)) {}
     ~Target();
     void draw();
     void move(float dt);
