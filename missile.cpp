@@ -1,6 +1,9 @@
 #include "missile.h"
 
-Missile::Missile(glm::vec2 velocity, glm::vec2 position) : vel(velocity), pos(position) {
+Missile::Missile(glm::vec2 target, glm::vec2 position) : pos(position) {
+    // Initialize velocity
+    update_target(target);
+
     // Setup VAO, VBO
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -25,6 +28,10 @@ void Missile::draw() {
 void Missile::move(float dt) {
     pos += vel * dt;
     updateVBO();
+}
+
+void Missile::update_target(glm::vec2 target) {
+    vel = glm::normalize(target - pos) * speed;
 }
 
 bool OOB(Missile *m) {

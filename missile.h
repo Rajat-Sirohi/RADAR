@@ -9,11 +9,13 @@
 class Missile {
 public:
     glm::vec2 pos, vel;
-    Missile(glm::vec2 vel, glm::vec2 pos);
-    Missile(glm::vec2 vel) : Missile(vel, glm::vec2(0.0f)) {}
+    float speed = 2.0f;
+    Missile(glm::vec2 target, glm::vec2 pos);
+    Missile(glm::vec2 target) : Missile(target, glm::vec2(0.0f)) {}
     ~Missile();
     void draw();
     void move(float dt);
+    void update_target(glm::vec2 target);
 private:
     GLuint VAO, VBO;
     void updateVBO() {

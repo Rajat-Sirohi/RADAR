@@ -9,7 +9,7 @@ main.o: main.cpp target.h wave.h missile.h
 	$(CC) -g -c main.cpp
 shader.o: shader.cpp shader.h
 	$(CC) -g -c shader.cpp
-target.o: target.cpp target.h
+target.o: target.cpp target.h random.h
 	$(CC) -g -c target.cpp
 wave.o: wave.cpp wave.h
 	$(CC) -g -c wave.cpp

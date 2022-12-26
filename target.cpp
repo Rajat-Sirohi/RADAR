@@ -23,6 +23,7 @@ void Target::draw() {
 }
 
 void Target::move(float dt) {
+    //vel = glm::rotate(vel, RAND_M(0, 30) * dt);
     pos += vel * dt;
     updateVBO();
 }

@@ -123,13 +123,18 @@ void update(float dt) {
         if (OOB(*it_w)) {
             waves.erase(it_w);
         } else if ((*it_w)->received()) {
-            glm::vec2 vel = (*it_w)->process();
-            missiles.push_back(new Missile(vel));
+            glm::vec2 target = (*it_w)->process();
             waves.erase(it_w);
+
+            if (missiles.size() == 0)
+                missiles.push_back(new Missile(target));
+            else
+                missiles[0]->update_target(target);
         } else {
             for (Target *target : targets) {
-                if (target->contains((*it_w)->pos))
+                if (target->contains((*it_w)->pos)) {
                     (*it_w)->reflect();
+                }
             }
             it_w++;
         }
@@ -149,7 +154,7 @@ void render() {
     for (Target *target : targets)
         target->draw();
 
-    glPointSize(5);
+    glPointSize(2);
     passthroughShader.setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));
     for (Wave *wave : waves)
         wave->draw();
@@ -174,7 +179,7 @@ void run() {
         update(dt);
         render();
 
-        if (time - pulseTime > 2.0) {
+        if (time - pulseTime > 0.1) {
             pulse(waves);
             pulseTime = time;
         }

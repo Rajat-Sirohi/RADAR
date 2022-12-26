@@ -39,7 +39,7 @@ bool Wave::received() {
 }
 
 glm::vec2 Wave::process() {
-    return -3.0f * dir;
+    return -dir * speed * duration / 2.0f;
 }
 
 bool OOB(Wave *w) {

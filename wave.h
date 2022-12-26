@@ -12,7 +12,7 @@
 class Wave {
 public:
     glm::vec2 dir, pos = glm::vec2(0.0f);
-    float speed = 2.0f;
+    float speed = 10.0f;
     float duration = 0.0f;
     Wave(glm::vec2 dir);
     ~Wave();

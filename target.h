@@ -3,10 +3,11 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include <iostream>
 
-#define RAND_F (float(std::rand()) / float(RAND_MAX))
+#include "random.h"
 
 class Target {
 public:
@@ -14,8 +15,8 @@ public:
     float size;
     Target(glm::vec2 pos, glm::vec2 vel, float size);
     Target(glm::vec2 pos, glm::vec2 vel) : Target(pos, vel, 0.05f) {}
-    Target(glm::vec2 pos) : Target(pos, glm::vec2(0.0f)) {}
-    Target() : Target(glm::vec2(1.8*RAND_F-0.9, 1.8*RAND_F-0.9)) {}
+    Target(glm::vec2 pos) : Target(pos, RAND_DIR()) {}
+    Target() : Target(glm::vec2(RAND_M(0.3, 0.5), RAND_M(0.3, 0.5))) {}
     ~Target();
     void draw();
     void move(float dt);
